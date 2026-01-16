@@ -44,6 +44,8 @@ Design directives (project-specific)
 Agent behavior rules
 - Inspect the Key files section before proposing edits.
 - When making changes: include exact file paths and minimal diffs; do not commit secrets or `venv` contents.
+ - Code formatting: Format code by default and follow the repository's indentation policies. Run the project's configured formatter (or match existing style) before submitting changes.
+ - Comments: Add comment lines only when absolutely necessary; prefer clear, self-explanatory code over extra inline comments.
 - For frontend UI changes: propose token updates and one focused component example rather than broad scaffolds.
 - Merge this file intelligently if an existing `.github/copilot-instructions.md` exists; preserve useful prior content.
 
