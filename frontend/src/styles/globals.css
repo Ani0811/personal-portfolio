@@ -1,0 +1,103 @@
+@layer base {
+  /* keep border-color variables but avoid forcing outlines on every element
+     — global outlines made every element show boxes; restrict outlines to
+     keyboard-focusable elements using :focus-visible instead */
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Accessible focus rings only when keyboard focusing */
+  :where(:focus-visible) {
+    outline-color: var(--color-ring);
+    outline-style: auto;
+    outline-width: 3px;
+    outline-offset: 2px;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+  scroll-behavior: smooth;
+}
+
+/* Typography utility classes for emphasis and theme-aware highlights */
+@layer utilities {
+  .emphasis {
+    font-weight: 600;
+  }
+
+  .fw-700 {
+    font-weight: 700;
+  }
+
+  .highlight {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .primary-highlight {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .highlight-muted {
+    color: var(--color-muted-foreground);
+    font-weight: 600;
+  }
+}
