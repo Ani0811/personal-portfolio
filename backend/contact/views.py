@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+import logging
 from django.utils import timezone
 from zoneinfo import ZoneInfo
 from .models import ContactMessage
@@ -32,7 +33,7 @@ class ContactCreateView(generics.CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
-        # Send email notification
+        # Send email notification (best-effort). Skip if SMTP credentials are not configured.
         try:
             contact_data = serializer.data
             name = contact_data.get('name', 'Unknown')
@@ -201,9 +202,13 @@ class ContactCreateView(generics.CreateAPIView):
             </html>
             """
             
-            # Send email to yourself
+            # Send email to yourself only if SMTP settings exist
             recipient_email = settings.EMAIL_HOST_USER
-            if recipient_email:
+            smtp_user = getattr(settings, 'EMAIL_HOST_USER', '')
+            smtp_pass = getattr(settings, 'EMAIL_HOST_PASSWORD', '')
+            logger = logging.getLogger(__name__)
+
+            if recipient_email and smtp_user and smtp_pass:
                 msg = EmailMultiAlternatives(
                     subject=subject,
                     body=text_content,
@@ -211,9 +216,15 @@ class ContactCreateView(generics.CreateAPIView):
                     to=[recipient_email]
                 )
                 msg.attach_alternative(html_content, "text/html")
-                msg.send(fail_silently=False)
+                try:
+                    # Best-effort send; don't allow SMTP errors to break the API.
+                    msg.send(fail_silently=True)
+                except Exception as send_err:
+                    logger.exception("ContactCreateView: failed to send email: %s", send_err)
+            else:
+                logger.info("ContactCreateView: SMTP not configured, skipping email send.")
         except Exception as e:
-            # Log the error but don't fail the request
-            print(f"Failed to send email notification: {e}")
+            # Log any unexpected error but don't fail the request
+            logging.getLogger(__name__).exception("Failed to prepare/send contact email: %s", e)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
