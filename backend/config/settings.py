@@ -41,11 +41,35 @@ else:
     DEBUG = str(_debug_env).lower() in ('1', 'true', 'yes')
 
 # ALLOWED_HOSTS can be provided as a comma-separated list in DJANGO_ALLOWED_HOSTS
-_hosts = os.getenv('DJANGO_ALLOWED_HOSTS')
+# Always ensure these sensible defaults are present for local testing and Render
+_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
+# Default hosts to include
+_default_hosts = ['localhost', '127.0.0.1']
+
+# Also allow specifying the backend URL directly (convenient for Render).
+# `BACKEND_RENDER_URL` may include scheme; extract hostname for ALLOWED_HOSTS.
+_backend_render_url = os.getenv('BACKEND_RENDER_URL', '')
+if _backend_render_url:
+    try:
+        from urllib.parse import urlparse
+
+        parsed = urlparse(_backend_render_url)
+        backend_host = parsed.netloc or parsed.path  # netloc empty if no scheme
+        # strip possible trailing slashes
+        backend_host = backend_host.rstrip('/')
+        if backend_host:
+            _default_hosts.insert(0, backend_host)
+    except Exception:
+        # ignore parse errors and proceed with defaults
+        pass
 if _hosts:
+    # Start with environment-provided hosts, then append defaults if missing
     ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
+    for dh in _default_hosts:
+        if dh not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(dh)
 else:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = _default_hosts.copy()
 
 
 # Application definition
