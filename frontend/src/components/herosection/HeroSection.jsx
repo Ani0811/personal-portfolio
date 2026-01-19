@@ -195,7 +195,7 @@ export function HeroSection() {
               className="hero-badges inline-flex flex-wrap justify-center gap-3 max-w-full mt-16"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              <span data-depth="18" className="inline-block" style={{ transition: 'transform 220ms ease' }}>
+                <span data-depth="18" className="inline-block" style={{ transition: 'transform 220ms ease' }}>
                 <Badge variant="outline" size="lg" className="border-2 text-accent bg-transparent text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-2">
                   Junior Software Developer
                 </Badge>
