@@ -192,7 +192,7 @@ export function HeroSection() {
           >
             <div
               ref={badgeRef}
-              className="hero-badges inline-flex flex-wrap justify-center gap-3 max-w-full mt-8"
+              className="hero-badges inline-flex flex-wrap justify-center gap-3 max-w-full mt-12"
               style={{ transformStyle: 'preserve-3d' }}
             >
               <span data-depth="18" className="inline-block" style={{ transition: 'transform 220ms ease' }}>
