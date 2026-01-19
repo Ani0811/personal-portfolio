@@ -11,15 +11,14 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       'three',
-      '@react-three/fiber',
-      '@react-three/drei'
+      '@react-three/fiber'
     ],
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          'three-vendor': ['three', '@react-three/fiber', '@react-three/drei']
+          'three-vendor': ['three', '@react-three/fiber']
         }
       }
     }

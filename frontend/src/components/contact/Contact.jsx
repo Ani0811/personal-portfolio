@@ -24,7 +24,8 @@ export function ContactSection() {
     setErrorMessage('');
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      // Prefer production-specific API URL if provided, then generic VITE_API_URL, then localhost
+      const apiUrl = import.meta.env.VITE_API_URL_PROD || import.meta.env.VITE_API_URL_DEV || 'http://localhost:8000';
       const payload = {
         name: formData.name,
         email: formData.email,
