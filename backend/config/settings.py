@@ -43,8 +43,9 @@ else:
 # ALLOWED_HOSTS can be provided as a comma-separated list in DJANGO_ALLOWED_HOSTS
 # Always ensure these sensible defaults are present for local testing and Render
 _hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
-# Default hosts to include
-_default_hosts = ['localhost', '127.0.0.1']
+# Default hosts to include (always allow the Render hostname plus localhost)
+# Ensure this is present even if BACKEND_RENDER_URL isn't provided in environment
+_default_hosts = ['personal-portfolio-gsee.onrender.com', 'localhost', '127.0.0.1']
 
 # Also allow specifying the backend URL directly (convenient for Render).
 # `BACKEND_RENDER_URL` may include scheme; extract hostname for ALLOWED_HOSTS.
