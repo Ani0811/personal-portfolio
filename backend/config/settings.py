@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
 
 # Load environment variables from a .env file if available (optional)
 try:
@@ -122,27 +121,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# Use DATABASE_URL from environment (Render provides this automatically for MySQL)
-# Format: mysql://user:password@host:port/database
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-if DATABASE_URL:
-    # Production: use external database (MySQL on Render)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+# Use SQLite for both development and production
+# For Render: the db.sqlite3 file persists in the writable /opt/render/project/src directory
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    # Development: use SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 
 # Password validation
