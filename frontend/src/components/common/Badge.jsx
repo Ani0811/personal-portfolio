@@ -37,14 +37,25 @@ export function Badge({
   }
 
   return (
-    <span className={classes} {...props}>
+    <span
+      className={classes}
+      {...props}
+      style={{
+        ...props.style,
+        boxShadow: '0 6px 24px rgba(2,6,23,0.18), inset 0 1px 0 rgba(255,255,255,0.02)',
+        border: variant === 'outline' ? '1px solid rgba(255,255,255,0.06)' : undefined,
+        background: variant === 'outline' ? 'color-mix(in srgb, var(--color-accent) 10%, transparent)' : undefined,
+        backdropFilter: 'saturate(120%) blur(4px)',
+      }}
+    >
       <span
         className="absolute inset-0 pointer-events-none transition-opacity opacity-0 group-hover:opacity-100"
         style={{
-          background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 18%, transparent), transparent)',
+          background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent)',
+          mixBlendMode: 'screen',
         }}
       />
-      <span className="relative z-10" style={varStyle}>
+      <span className="relative z-10" style={{ ...varStyle, textShadow: '0 2px 8px rgba(2,6,23,0.28)' }}>
         {children}
       </span>
     </span>

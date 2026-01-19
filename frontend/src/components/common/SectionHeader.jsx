@@ -12,14 +12,14 @@ export function SectionHeader({
   const content = (
     <>
       {label && (
-        <span className="text-accent text-sm tracking-widest uppercase mb-3 block">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs tracking-widest uppercase mb-4 font-semibold border border-accent/20 transition-all duration-200 hover:bg-accent/20 hover:border-accent/40 hover:scale-105 cursor-default">
           {label}
         </span>
       )}
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">{title}</h2>
-      <div className={`w-20 h-1 bg-accent ${centered ? 'mx-auto' : ''} ${description ? 'mb-4' : ''}`} />
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-3d" style={{ color: 'var(--color-accent)' }}>{title}</h2>
+      <div className={`${centered ? 'mx-auto' : ''} ${description ? 'mb-4' : ''}`} style={{ width: '5rem', height: '0.25rem', background: 'var(--color-accent)' }} />
       {description && (
-        <p className={`text-muted-foreground ${centered ? 'max-w-2xl mx-auto' : ''}`}>
+        <p className={`${centered ? 'max-w-2xl mx-auto' : ''} text-muted-foreground`}>
           {description}
         </p>
       )}

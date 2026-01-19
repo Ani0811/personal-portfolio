@@ -32,13 +32,13 @@ export function ScrollToTop() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 p-3 rounded-lg shadow-lg hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-foreground)' }}
+          className="fixed bottom-8 right-4 sm:bottom-8 sm:right-8 z-60 p-2 sm:p-3 rounded-lg shadow-lg hover:opacity-90 transition-opacity"
+          style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-foreground)', border: 'none', cursor: 'pointer' }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           aria-label="Scroll to top"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12 12 4 4 12z" />
           </svg>
         </motion.button>

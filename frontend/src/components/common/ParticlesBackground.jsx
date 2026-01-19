@@ -19,7 +19,8 @@ export default function ParticlesBackground() {
     window.addEventListener('resize', setCanvasSize);
 
     const particles = [];
-    const particleCount = 80;
+    const isSmall = typeof window !== 'undefined' && window.innerWidth < 640;
+    const particleCount = isSmall ? 20 : 80;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({

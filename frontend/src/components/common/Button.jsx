@@ -5,7 +5,6 @@ const variants = {
   primary: 'bg-[var(--color-accent)] text-[var(--color-accent-foreground)] hover:opacity-90',
   contact:
     'bg-[var(--color-accent)] text-[var(--color-accent-foreground)] shadow-lg shadow-[color:var(--color-accent)/20] hover:opacity-95 hover:shadow-2xl hover:scale-105',
-  secondary: 'bg-[var(--color-card)] border border-[color:var(--color-border)] hover:bg-[color:var(--color-accent)/5]',
   secondary: 'bg-[var(--color-card)] border border-[color:var(--color-border)] hover:bg-[color:var(--color-accent)/5] hover:shadow-md hover:scale-105',
   outline: 'border border-[color:var(--color-border)] hover:bg-[color:var(--color-accent)/5]',
   ghost: 'hover:bg-[color:var(--color-accent)/10]',
@@ -58,7 +57,6 @@ export const Button = forwardRef(function Button(
   }
   if (variant === 'ghost') {
     varStyle.backgroundColor = 'transparent';
-    varStyle.color = 'var(--color-foreground)';
   }
 
   const content = (

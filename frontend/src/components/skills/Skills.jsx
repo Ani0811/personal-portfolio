@@ -53,16 +53,19 @@ export function SkillsSection() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {skillCategories.map((category, categoryIndex) => (
-            <Card
+            <motion.div
               key={category.title}
-              className="p-8 group"
-              animate
-              animationProps={{
-                initial: { opacity: 0, y: 30 },
-                animate: isInView ? { opacity: 1, y: 0 } : {},
-                transition: { duration: 0.6, delay: categoryIndex * 0.1 },
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
+              whileHover={{
+                rotateY: 2,
+                rotateX: -2,
+                transition: { duration: 0.3 }
               }}
+              style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
             >
+            <Card className="p-8 group h-full">
               <div
                 className="absolute inset-0 pointer-events-none transition-opacity opacity-0 group-hover:opacity-100"
                 style={{
@@ -81,14 +84,15 @@ export function SkillsSection() {
                       duration: 0.4,
                       delay: categoryIndex * 0.1 + skillIndex * 0.05,
                     }}
-                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent group-hover:scale-125 transition-transform" />
+                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group/item"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent group-hover/item:scale-125 transition-transform" />
                     <span>{skill}</span>
                   </motion.li>
                 ))}
               </ul>
             </Card>
+            </motion.div>
           ))}
         </div>
 

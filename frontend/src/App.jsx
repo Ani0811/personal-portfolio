@@ -2,10 +2,11 @@ import './App.css'
 import { useEffect, useState } from 'react'
 import { ThemeProvider } from './components/themes/ThemeProvider'
 import ParticlesBackground from './components/common/ParticlesBackground'
-import SignatureOverlay from './components/common/SignatureOverlay'
+import GlitterOverlay from './components/common/GlitterOverlay'
 import { AboutSection } from './components/about/About'
-import { HomeSection } from './components/home/Home'
+import { HeroSection } from './components/herosection/HeroSection'
 import { ContactSection } from './components/contact/Contact'
+import { CertificationsSection } from './components/certifications/Certifications'
 import { Footer } from './components/footer/Footer'
 import { Navigation } from './components/navigation/Navigation'
 import { SkillsSection } from './components/skills/Skills'
@@ -16,7 +17,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState('home')
 
   useEffect(() => {
-    const sections = ['home', 'about', 'skills', 'projects', 'contact']
+    const sections = ['home', 'about', 'skills', 'projects', 'certifications', 'contact']
     const onScroll = () => {
       const scrollPos = window.scrollY + 120
       let current = 'home'
@@ -37,23 +38,30 @@ export default function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-background text-foreground">
-        <ParticlesBackground />
-        <SignatureOverlay />
+        {/* Global particles + glitter overlay */}
+        <ParticlesBackground 
+          style={{ 
+            opacity: activeSection === 'home' ? 0.3 : 1,
+            transition: 'opacity 0.6s ease'
+          }} 
+        />
+        <GlitterOverlay intensity={1.0} />
 
         <div className="relative z-10">
           <Navigation activeSection={activeSection} />
 
           <main>
-            <HomeSection />
+            <HeroSection />
             <AboutSection />
             <SkillsSection />
             <ProjectsSection />
+            <CertificationsSection />
             <ContactSection />
           </main>
 
           <Footer />
-          <ScrollToTop />
         </div>
+        <ScrollToTop />
       </div>
     </ThemeProvider>
   )

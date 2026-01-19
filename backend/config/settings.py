@@ -11,6 +11,16 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+# Load environment variables from a .env file if available (optional)
+try:
+    from dotenv import load_dotenv
+    _env_path = BASE_DIR = Path(__file__).resolve().parent.parent
+    load_dotenv(os.path.join(_env_path, '.env'))
+except Exception:
+    # python-dotenv not installed or .env not present - continue using os.environ
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +30,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k@%hjfc4s82lgj34@75k3be$icnrv!6r!tfnvaot*=5hl$8&vw'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-k@%hjfc4s82lgj34@75k3be$icnrv!6r!tfnvaot*=5hl$8&vw')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+_debug_env = os.getenv('DJANGO_DEBUG')
+if _debug_env is None:
+    DEBUG = True
+else:
+    DEBUG = str(_debug_env).lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS can be provided as a comma-separated list in DJANGO_ALLOWED_HOSTS
+_hosts = os.getenv('DJANGO_ALLOWED_HOSTS')
+if _hosts:
+    ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -37,12 +56,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'contact.apps.ContactConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -117,3 +138,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# CORS: allow the Vite dev server during development
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

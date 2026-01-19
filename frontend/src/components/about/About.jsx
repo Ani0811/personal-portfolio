@@ -2,6 +2,8 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Code2, Layers, Rocket } from 'lucide-react';
 import { SectionHeader, FeatureCard, Button } from '../common';
+import { useTheme } from '../themes/ThemeProvider';
+
 
 export function AboutSection() {
   const ref = useRef(null);
@@ -26,8 +28,9 @@ export function AboutSection() {
   ];
 
   return (
-    <section id="about" ref={ref} className="py-20 lg:py-32 bg-card/30">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" ref={ref} className="relative py-20 lg:py-32 bg-card/30 overflow-hidden">
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           label="About Me"
           title="Building With Purpose"
@@ -61,10 +64,11 @@ export function AboutSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="mt-6"
+                className="mt-6 hover:scale-105 transition-transform"
                 href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
+                animate
                 icon={
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>

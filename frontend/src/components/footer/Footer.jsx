@@ -1,60 +1,195 @@
+import { useRef, useEffect } from 'react';
+import { useInView } from 'framer-motion';
+
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const footerRef = useRef(null);
+  const signatureRef = useRef(null);
+  const isInView = useInView(footerRef, { once: true, margin: '-100px' });
+
+  const NAME = 'Anirudha Basu Thakur';
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{};:<>/?|\\';
+
+  useEffect(() => {
+    if (!isInView || !signatureRef.current) return;
+
+    const el = signatureRef.current;
+    let cycleTimers = [];
+    let isMounted = true;
+
+    const runCycle = () => {
+      if (!isMounted || !el) return;
+
+      const letters = Array.from(NAME);
+      el.innerHTML = letters.map((c) => `<span class="sig-char" aria-hidden="true">&nbsp;</span>`).join('');
+      const spans = Array.from(el.querySelectorAll('.sig-char'));
+      const timers = [];
+      let maxEnd = 0;
+
+      // Type animation
+      spans.forEach((span, idx) => {
+        const target = letters[idx];
+        const startDelay = 60 * idx + Math.random() * 90;
+        const scrambleDuration = 450 + Math.random() * 300;
+        const endAt = startDelay + scrambleDuration;
+        if (endAt > maxEnd) maxEnd = endAt;
+
+        const start = setTimeout(() => {
+          if (!isMounted) return;
+          const startedAt = Date.now();
+          const interval = setInterval(() => {
+            if (!isMounted) {
+              clearInterval(interval);
+              return;
+            }
+            const t = Date.now() - startedAt;
+            if (t >= scrambleDuration) {
+              span.textContent = target === ' ' ? '\u00A0' : target;
+              span.classList.add('settled');
+              clearInterval(interval);
+              return;
+            }
+            span.textContent = CHARS.charAt(Math.floor(Math.random() * CHARS.length));
+          }, 28 + Math.random() * 36);
+          timers.push(interval);
+        }, startDelay);
+        timers.push(start);
+      });
+
+      // Untype animation after pause
+      const untypeDelay = maxEnd + 2600;
+      const untypeTimer = setTimeout(() => {
+        if (!isMounted) return;
+        for (let i = spans.length - 1; i >= 0; i--) {
+          const s = spans[i];
+          const delay = (spans.length - 1 - i) * 90;
+          const t = setTimeout(() => {
+            if (!isMounted) return;
+            s.style.transition = 'opacity 220ms ease, transform 220ms ease';
+            s.style.opacity = '0';
+            s.style.transform = 'translateY(8px) scale(0.94)';
+            setTimeout(() => {
+              if (isMounted) s.textContent = '\u00A0';
+            }, 220);
+          }, delay);
+          timers.push(t);
+        }
+
+        // Start next cycle after untyping completes
+        const totalUntype = spans.length * 90 + 600;
+        const nextCycleTimer = setTimeout(() => {
+          if (isMounted) runCycle();
+        }, totalUntype);
+        timers.push(nextCycleTimer);
+      }, untypeDelay);
+
+      timers.push(untypeTimer);
+      cycleTimers = timers;
+    };
+
+    runCycle();
+
+    return () => {
+      isMounted = false;
+      cycleTimers.forEach((t) => {
+        try {
+          clearTimeout(t);
+          clearInterval(t);
+        } catch (e) {
+          /* ignore */
+        }
+      });
+    };
+  }, [isInView]);
 
   return (
-    <footer className="border-t border-border bg-card/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer
+      ref={footerRef}
+      className="border-t"
+      style={{
+        background: 'var(--nav-footer-bg)',
+        borderColor: 'var(--nav-footer-border)',
+        color: 'var(--nav-footer-text)'
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Logo/Name */}
           <div className="text-center md:text-left">
-            <div className="text-lg font-semibold mb-2">
-              <span className="text-accent">&lt;</span>
-              Dev
-              <span className="text-accent">/&gt;</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © {currentYear} All rights reserved.
-            </p>
-          </div>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-lg bg-card border border-border hover:border-accent text-muted-foreground hover:text-accent transition-colors flex items-center justify-center"
-              aria-label="GitHub"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.775.418-1.305.76-1.605-2.665-.305-5.466-1.332-5.466-5.931 0-1.31.47-2.381 1.235-3.221-.135-.303-.54-1.524.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.874.12 3.176.765.84 1.23 1.911 1.23 3.221 0 4.61-2.805 5.625-5.475 5.921.435.375.825 1.11.825 2.235 0 1.615-.015 2.915-.015 3.31 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12 24 5.37 18.63 0 12 0z" />
-              </svg>
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-lg bg-card border border-border hover:border-accent text-muted-foreground hover:text-accent transition-colors flex items-center justify-center"
-              aria-label="LinkedIn"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.85-3.036-1.851 0-2.134 1.445-2.134 2.939v5.666H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.369-1.85 3.602 0 4.268 2.37 4.268 5.456v6.285zM5.337 7.433a2.066 2.066 0 11.001-4.131 2.066 2.066 0 01-.001 4.131zM7.119 20.452H3.554V9h3.565v11.452z" />
-              </svg>
-            </a>
-            <a
-              href="mailto:developer@example.com"
-              className="w-10 h-10 rounded-lg bg-card border border-border hover:border-accent text-muted-foreground hover:text-accent transition-colors flex items-center justify-center"
-              aria-label="Email"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-              </svg>
-            </a>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
+                  <img src="/assets/icons/ABT_Logo.svg" alt="ABT Logo" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            <div className="text-sm text-muted-foreground">Full-stack projects, design systems, and thoughtful code.</div>
           </div>
         </div>
 
-        
+        {/* Single centered row: © year • Created By: <signature> • Linktree */}
+          <div className="mt-6 flex flex-col md:flex-row items-center md:items-center justify-center md:justify-between gap-4 sm:gap-6 text-center md:text-left">
+            {/* Left: copyright (Dev logo removed) */}
+            <div className="flex items-center justify-center md:justify-start w-full md:w-auto">
+              <span className="text-xs sm:text-sm text-muted-foreground">© {currentYear} All rights reserved.</span>
+            </div>
+
+            {/* Center: Created By + animated signature */}
+            <div className="mt-3 md:mt-0 flex flex-wrap items-center justify-center gap-2 text-center w-full md:w-auto">
+              <span className="text-xs sm:text-sm text-muted-foreground align-middle">Created By:</span>
+              <div
+                ref={signatureRef}
+                className="signature-wrap text-accent font-mono font-bold text-sm sm:text-base tracking-wider inline-flex align-middle"
+                style={{
+                  filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.15))',
+                  minHeight: '24px'
+                }}
+              />
+            </div>
+
+            {/* Right: Linktree icon */}
+            <div className="flex items-center justify-center md:justify-end gap-4 w-full md:w-auto">
+              <a
+                href="https://linktr.ee/AnirudhaBasuThakur"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 ring-1 ring-transparent"
+                aria-label="Linktree"
+                style={{ background: 'var(--color-accent)', boxShadow: '0 8px 28px rgba(6,182,212,0.18)' }}
+              >
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <g>
+                    <circle cx="8" cy="8" r="3" />
+                    <circle cx="16" cy="8" r="3" />
+                    <rect x="7" y="12" width="10" height="6" rx="3" />
+                  </g>
+                </svg>
+              </a>
+            </div>
+          </div>
       </div>
+      
+      <style>{`
+        .sig-char {
+          display: inline-block;
+          transition: all 0.15s ease;
+        }
+        .sig-char.settled {
+          color: var(--color-accent);
+        }
+        .signature-wrap {
+          display: inline-flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          vertical-align: middle;
+          max-width: 260px;
+          line-height: 1;
+        }
+        @media (min-width: 640px) {
+          .signature-wrap {
+            max-width: none;
+          }
+        }
+      `}</style>
     </footer>
   );
 }

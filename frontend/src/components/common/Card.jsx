@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
+import { useRef } from 'react';
 
 export function Card({
   children,
@@ -36,6 +37,22 @@ export function FeatureCard({
   animate = false,
   animationProps = {},
 }) {
+  const innerRef = useRef(null);
+  const iconRef = useRef(null);
+  const motionAllowed = typeof window !== 'undefined' ? !window.matchMedia('(prefers-reduced-motion: reduce)').matches : true;
+
+  const handleEnter = () => {
+    if (!motionAllowed) return;
+    if (innerRef.current) innerRef.current.style.transform = 'translateZ(12px)';
+    if (iconRef.current) iconRef.current.style.transform = 'translateZ(30px) scale(1.04)';
+  };
+
+  const handleLeave = () => {
+    if (!innerRef.current && !iconRef.current) return;
+    if (innerRef.current) innerRef.current.style.transform = '';
+    if (iconRef.current) iconRef.current.style.transform = '';
+  };
+
   const content = (
     <>
       <div
@@ -45,11 +62,15 @@ export function FeatureCard({
             'linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent)',
         }}
       />
-      <div className="shrink-0 w-12 h-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center transition-colors transform group-hover:bg-accent/20 group-hover:scale-105">
+      <div
+        ref={iconRef}
+        className="shrink-0 w-12 h-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center transition-colors"
+        style={{ transform: 'translateZ(0)', transition: 'transform 260ms ease', transformStyle: 'preserve-3d' }}
+      >
         {icon}
       </div>
       <div>
-        <h3 className="font-semibold mb-2">{title}</h3>
+        <h3 className="font-semibold mb-2 text-3d">{title}</h3>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
     </>
@@ -59,13 +80,26 @@ export function FeatureCard({
 
   if (animate) {
     return (
-      <motion.div className={classes} {...animationProps}>
-        {content}
+      <motion.div
+        className={classes}
+        {...animationProps}
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
+      >
+        <div ref={innerRef} style={{ transformStyle: 'preserve-3d', transition: 'transform 260ms ease' }}>
+          {content}
+        </div>
       </motion.div>
     );
   }
 
-  return <div className={classes}>{content}</div>;
+  return (
+    <div className={classes} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+      <div ref={innerRef} style={{ transformStyle: 'preserve-3d', transition: 'transform 260ms ease' }}>
+        {content}
+      </div>
+    </div>
+  );
 }
 
 export function ProjectCard({
@@ -91,11 +125,15 @@ export function ProjectCard({
       />
       <div className="relative h-48 lg:h-full lg:col-span-1 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-accent/20 to-transparent z-10" />
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {typeof image === 'string' ? (
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          image
+        )}
         {featured && (
           <div className="absolute top-4 left-4 z-20">
             <span className="px-3 py-1.5 bg-yellow-400 text-yellow-900 dark:bg-yellow-500 dark:text-yellow-900 text-sm font-semibold rounded-full flex items-center shadow-sm">
@@ -106,7 +144,7 @@ export function ProjectCard({
         )}
       </div>
       <div className="p-6 lg:p-8 flex flex-col justify-center lg:flex-1 lg:col-span-1">
-        <h3 className="text-xl lg:text-2xl font-bold mb-3">{title}</h3>
+        <h3 className="text-xl lg:text-2xl font-bold mb-3 text-3d">{title}</h3>
         <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
           {description}
         </p>
@@ -122,7 +160,7 @@ export function ProjectCard({
             ))}
           </div>
         )}
-        {actions && <div className="flex gap-3">{actions}</div>}
+        {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
       </div>
     </>
   );

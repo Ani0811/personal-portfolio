@@ -22,6 +22,49 @@
   }
 }
 
+/* Custom SVG cursor (data URL). Hotspot set to 16,16 with auto fallback. */
+:root, .dark, body, html {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'><path fill='%235CFFF6' stroke='%233023FF' stroke-width='2' d='M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.35Z'></path></svg>") 16 16, auto;
+}
+
+/* Ensure decorative overlay canvases and particle layers do not capture pointer events */
+canvas,
+.particles-background,
+.glitter-overlay,
+.signature-overlay,
+.robotic-signature,
+.particle-container {
+  pointer-events: none !important;
+}
+
+/* Interactive elements: normal cursors and pointer events (no forced z-indexes) */
+a,
+a *,
+button:not([class*="fixed"]),
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn,
+.nav-link,
+.jewel-icon,
+.show-creds-btn,
+footer a {
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+}
+
+/* Text controls use text cursor */
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  cursor: text;
+  pointer-events: auto;
+}
+
+label { cursor: pointer; }
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */
@@ -76,6 +119,70 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Increase base font size on mobile for better readability */
+@media (max-width: 640px) {
+  html {
+    font-size: 18px;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Scale up components on mobile */
+  body {
+    --spacing-scale: 1.15;
+  }
+  
+  /* Increase touch target sizes */
+  button, a[role="button"] {
+    min-height: 44px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+/* Navigation link hover fallback to ensure underline and color work across themes */
+.nav-link {
+  color: var(--color-muted-foreground, inherit);
+}
+.nav-link:hover {
+  color: var(--color-foreground, inherit);
+}
+.nav-underline {
+  width: 0;
+}
+.nav-link:hover .nav-underline {
+  width: 100%;
+}
+
+/* Stronger hover / active visual for navigation links */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 180ms ease, transform 120ms ease, box-shadow 180ms ease;
+}
+.nav-link:hover {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+}
+.nav-link[aria-current="true"] {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-foreground);
+  box-shadow: 0 8px 24px rgba(2,6,23,0.12);
+}
+.nav-link:active {
+  transform: translateY(0);
+}
+
+
 /* Typography utility classes for emphasis and theme-aware highlights */
 @layer utilities {
   .emphasis {
@@ -100,4 +207,32 @@ html {
     color: var(--color-muted-foreground);
     font-weight: 600;
   }
+
+  /* Subtle 3D text effect used for section headings */
+  .text-3d {
+    text-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 6px 18px rgba(2,6,23,0.6), 0 2px 8px rgba(2,6,23,0.4), 0 12px 32px rgba(6,182,212,0.15);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  .dark .text-3d {
+    text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 6px 20px rgba(6,182,212,0.35), 0 2px 8px rgba(6,182,212,0.25), 0 12px 36px rgba(6,182,212,0.18);
+  }
+
+/* Responsive tweaks for mobile to improve layout and performance */
+@media (max-width: 640px) {
+  .hero-heading span {
+    transform: none !important;
+  }
+
+  .hero-badges {
+    gap: 0.5rem !important;
+    justify-content: center;
+  }
+
+  .hero-badges > span {
+    display: inline-flex !important;
+    width: auto !important;
+  }
+}
 }
