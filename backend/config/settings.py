@@ -183,10 +183,11 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # CORS: allow the Vite dev server during development
 # In production, set CORS_ALLOWED_ORIGINS environment variable
-_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS')
+_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
 if _cors_origins:
     # Production: use specific origins from environment variable (comma-separated)
-    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
+    # Normalize each origin: strip whitespace and trailing slashes
+    CORS_ALLOWED_ORIGINS = [origin.strip().rstrip('/') for origin in _cors_origins.split(',') if origin.strip()]
 else:
     # Development: allow local dev server
     CORS_ALLOWED_ORIGINS = [
