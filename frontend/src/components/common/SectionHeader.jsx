@@ -12,7 +12,11 @@ export function SectionHeader({
   const content = (
     <>
       {label && (
-        <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs tracking-widest uppercase mb-4 font-semibold border border-accent/20 transition-all duration-200 hover:bg-accent/20 hover:border-accent/40 hover:scale-105 cursor-default">
+        <span
+          role="button"
+          tabIndex={0}
+          className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs tracking-widest uppercase mb-4 font-semibold border border-accent/20 transition-all duration-200 hover:bg-accent/20 hover:border-accent/40 hover:scale-105 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+        >
           {label}
         </span>
       )}
