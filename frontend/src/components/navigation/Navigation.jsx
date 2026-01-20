@@ -65,7 +65,8 @@ export function Navigation({ activeSection }) {
           <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
             {/* Logo */}
             <motion.button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              type="button"
+              onClick={() => scrollToSection('home')}
               className="flex items-center gap-2 text-lg sm:text-xl font-semibold tracking-tight hover:text-accent transition-colors"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -75,7 +76,6 @@ export function Navigation({ activeSection }) {
                   src="/assets/icons/ABT_Logo.svg"
                   alt="ABT Logo"
                   className="w-full h-full object-cover"
-                  aria-hidden="true"
                 />
               </div>
               <span className="sr-only">Home</span>
@@ -142,10 +142,19 @@ export function Navigation({ activeSection }) {
               <div className="flex flex-col h-full p-6 overflow-auto">
                   <div className="flex items-center justify-between mb-12">
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
-                      <img src="/assets/icons/ABT_Logo.svg" alt="ABT Logo" className="w-full h-full object-cover" />
-                    </div>
-                    <span className="text-lg font-semibold">ABT</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          scrollToSection('home');
+                          setMobileMenuOpen(false);
+                        }}
+                        className="flex items-center gap-2 text-left"
+                      >
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
+                          <img src="/assets/icons/ABT_Logo.svg" alt="ABT Logo" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="text-lg font-semibold">ABT</span>
+                      </button>
                   </div>
                   <button
                     onClick={() => setMobileMenuOpen(false)}

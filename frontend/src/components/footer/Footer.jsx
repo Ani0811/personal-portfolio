@@ -116,11 +116,16 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Logo/Name */}
           <div className="text-center md:text-left">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
-                  <img src="/assets/icons/ABT_Logo.svg" alt="ABT Logo" className="w-full h-full object-cover" />
-                </div>
-              </div>
+            <div className="flex items-center gap-3 mb-2">
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                aria-label="Home"
+              >
+                <img src="/assets/icons/ABT_Logo.svg" alt="ABT Logo" className="w-full h-full object-cover" />
+              </button>
+            </div>
             <div className="text-sm text-muted-foreground">Full-stack projects, design systems, and thoughtful code.</div>
           </div>
         </div>
