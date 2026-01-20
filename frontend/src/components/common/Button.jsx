@@ -36,7 +36,7 @@ export const Button = forwardRef(function Button(
   const disabledClass = disabled ? 'opacity-50 pointer-events-none' : '';
   const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className} ${disabledClass}`;
 
-  const { href, target, rel, ...restProps } = props;
+  const { href, target, rel, style: incomingStyle, ...restProps } = props;
   const isLink = Boolean(href);
 
   // Inline styles using CSS variables to ensure correct colors across themes
@@ -67,6 +67,8 @@ export const Button = forwardRef(function Button(
     </>
   );
 
+  const mergedStyle = { ...varStyle, ...(incomingStyle || {}) };
+
   if (animate) {
     if (isLink) {
       return (
@@ -78,7 +80,7 @@ export const Button = forwardRef(function Button(
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className={classes}
-          style={varStyle}
+          style={mergedStyle}
           aria-disabled={disabled}
           {...restProps}
         >
@@ -93,7 +95,7 @@ export const Button = forwardRef(function Button(
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className={classes}
-        style={varStyle}
+        style={mergedStyle}
         disabled={disabled}
         {...restProps}
       >
@@ -104,14 +106,14 @@ export const Button = forwardRef(function Button(
 
   if (isLink) {
     return (
-      <a ref={ref} href={href} target={target} rel={rel} className={classes} style={varStyle} aria-disabled={disabled} {...restProps}>
+      <a ref={ref} href={href} target={target} rel={rel} className={classes} style={mergedStyle} aria-disabled={disabled} {...restProps}>
         {content}
       </a>
     );
   }
 
   return (
-    <button ref={ref} className={classes} style={varStyle} disabled={disabled} {...restProps}>
+    <button ref={ref} className={classes} style={mergedStyle} disabled={disabled} {...restProps}>
       {content}
     </button>
   );
