@@ -209,18 +209,18 @@ class ContactCreateView(generics.CreateAPIView):
             logger = logging.getLogger(__name__)
 
             if recipient_email and smtp_user and smtp_pass:
-                msg = EmailMultiAlternatives(
-                    subject=subject,
-                    body=text_content,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    to=[recipient_email]
-                )
-                msg.attach_alternative(html_content, "text/html")
                 try:
+                    msg = EmailMultiAlternatives(
+                        subject=subject,
+                        body=text_content,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        to=[recipient_email]
+                    )
+                    msg.attach_alternative(html_content, "text/html")
                     # Best-effort send; don't allow SMTP errors to break the API.
                     msg.send(fail_silently=True)
                 except Exception as send_err:
-                    logger.exception("ContactCreateView: failed to send email: %s", send_err)
+                    logger.warning("ContactCreateView: failed to send email notification: %s", send_err)
             else:
                 logger.info("ContactCreateView: SMTP not configured, skipping email send.")
         except Exception as e:
