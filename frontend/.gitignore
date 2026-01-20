@@ -25,3 +25,5 @@ dist-ssr
 
 #Github Copilot instructions
 .github/
+
+.env
