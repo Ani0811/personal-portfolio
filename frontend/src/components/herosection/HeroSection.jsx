@@ -188,11 +188,11 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.5 }}
-            className="mb-6 mt-12 sm:mt-0 flex items-center justify-center gap-3"
+            className="mb-6 mt-6 sm:mt-6 flex items-center justify-center gap-3"
           >
             <div
               ref={badgeRef}
-              className="hero-badges inline-flex flex-wrap justify-center gap-3 max-w-full mt-2 sm:mt-8"
+              className="hero-badges inline-flex flex-wrap justify-center gap-3 max-w-full mt-2 sm:mt-8 md:mt-12"
               style={{ transformStyle: 'preserve-3d' }}
             >
                 <span data-depth="18" className="inline-block" style={{ transition: 'transform 220ms ease' }}>
