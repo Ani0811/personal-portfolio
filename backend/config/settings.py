@@ -187,25 +187,25 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # In production, set CORS_ALLOWED_ORIGINS environment variable
 _cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
 _frontend_url = os.getenv('FRONTEND_URL', '')  # e.g. https://personal-portfolio-three-delta-53.vercel.app
-if _cors_origins:
-    # Production: use specific origins from environment variable (comma-separated)
-    # Normalize each origin: strip whitespace and trailing slashes
-    CORS_ALLOWED_ORIGINS = [origin.strip().rstrip('/') for origin in _cors_origins.split(',') if origin.strip()]
-else:
-    # Development: allow local dev server
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ]
 
-# If a single FRONTEND_URL is provided (e.g. from Vercel), ensure it's allowed
+# Start with development defaults
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Add FRONTEND_URL if provided (highest priority - Vercel/production frontend)
 if _frontend_url:
-    try:
-        frontend = _frontend_url.strip().rstrip('/')
-        if frontend and frontend not in CORS_ALLOWED_ORIGINS:
-            CORS_ALLOWED_ORIGINS.insert(0, frontend)
-    except Exception:
-        pass
+    frontend = _frontend_url.strip().rstrip('/')
+    if frontend:
+        CORS_ALLOWED_ORIGINS.insert(0, frontend)
+
+# Add additional origins from CORS_ALLOWED_ORIGINS if provided
+if _cors_origins:
+    additional_origins = [origin.strip().rstrip('/') for origin in _cors_origins.split(',') if origin.strip()]
+    for origin in additional_origins:
+        if origin not in CORS_ALLOWED_ORIGINS:
+            CORS_ALLOWED_ORIGINS.append(origin)
 
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
