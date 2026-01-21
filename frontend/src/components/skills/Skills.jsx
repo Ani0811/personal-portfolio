@@ -1,26 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { SectionHeader, Card } from '../common';
-import {
-  SiReact,
-  SiJavascript,
-  SiTailwindcss,
-  SiHtml5,
-  SiCss3,
-  SiNodeDotJs,
-  SiJava,
-  SiDotnet,
-  SiPython,
-  SiPostgresql,
-  SiMongodb,
-  SiGithub,
-  SiAmazonaws,
-  SiMicrosoftazure,
-  SiPostman,
-  SiVisualstudiocode,
-  SiGit,
-  SiCode
-} from 'react-icons/si';
+import * as SiIcons from 'react-icons/si';
 
 export function SkillsSection() {
   const ref = useRef(null);
@@ -30,33 +11,33 @@ export function SkillsSection() {
     {
       title: 'Frontend',
       skills: [
-        { name: 'React.js', Icon: SiReact },
-        { name: 'JavaScript', Icon: SiJavascript },
-        { name: 'Tailwind CSS', Icon: SiTailwindcss },
-        { name: 'HTML/CSS', Icon: SiHtml5 },
-        { name: 'Responsive Design', Icon: SiCode },
+        { name: 'React.js', Icon: SiIcons.SiReact },
+        { name: 'JavaScript', Icon: SiIcons.SiJavascript },
+        { name: 'Tailwind CSS', Icon: SiIcons.SiTailwindcss },
+        { name: 'HTML/CSS', Icon: SiIcons.SiHtml5 },
+        { name: 'Responsive Design', Icon: SiIcons.SiCode },
       ],
     },
     {
       title: 'Backend & Databases',
       skills: [
-        { name: 'Node.js / Express', Icon: SiNodeDotJs },
-        { name: 'Java', Icon: SiJava },
-        { name: '.NET / C#', Icon: SiDotnet },
-        { name: 'Python', Icon: SiPython },
-        { name: 'SQL', Icon: SiPostgresql },
-        { name: 'MongoDB', Icon: SiMongodb },
+        { name: 'Node.js / Express', Icon: SiIcons.SiNodedotjs || SiIcons.SiNodeDotJs || SiIcons.SiNodejs || SiIcons.SiNode },
+        { name: 'Java', Icon: SiIcons.SiJava },
+        { name: '.NET / C#', Icon: SiIcons.SiDotnet || SiIcons.SiDotNet },
+        { name: 'Python', Icon: SiIcons.SiPython },
+        { name: 'SQL', Icon: SiIcons.SiPostgresql || SiIcons.SiPostgres },
+        { name: 'MongoDB', Icon: SiIcons.SiMongodb || SiIcons.SiMongodb },
       ],
     },
     {
       title: 'Tools & Platforms',
       skills: [
-        { name: 'Git / GitHub', Icon: SiGithub },
-        { name: 'AWS', Icon: SiAmazonaws },
-        { name: 'Azure', Icon: SiMicrosoftazure },
-        { name: 'REST APIs', Icon: SiCode },
-        { name: 'Postman', Icon: SiPostman },
-        { name: 'VS Code', Icon: SiVisualstudiocode },
+        { name: 'Git / GitHub', Icon: SiIcons.SiGithub || SiIcons.SiGit },
+        { name: 'AWS', Icon: SiIcons.SiAmazonaws || SiIcons.SiAws },
+        { name: 'Azure', Icon: SiIcons.SiMicrosoftazure || SiIcons.SiAzure },
+        { name: 'REST APIs', Icon: SiIcons.SiCode },
+        { name: 'Postman', Icon: SiIcons.SiPostman },
+        { name: 'VS Code', Icon: SiIcons.SiVisualstudiocode || SiIcons.SiVscode },
       ],
     },
   ];
