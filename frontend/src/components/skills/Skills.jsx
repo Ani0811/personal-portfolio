@@ -11,33 +11,33 @@ export function SkillsSection() {
     {
       title: 'Frontend',
       skills: [
-        { name: 'React.js', Icon: SiIcons.SiReact },
-        { name: 'JavaScript', Icon: SiIcons.SiJavascript },
-        { name: 'Tailwind CSS', Icon: SiIcons.SiTailwindcss },
-        { name: 'HTML/CSS', Icon: SiIcons.SiHtml5 },
-        { name: 'Responsive Design', Icon: SiIcons.SiCode },
+        { name: 'React.js', icon: 'SiReact' },
+        { name: 'JavaScript', icon: 'SiJavascript' },
+        { name: 'Tailwind CSS', icon: 'SiTailwindcss' },
+        { name: 'HTML/CSS', icon: 'SiHtml5' },
+        { name: 'Responsive Design', icon: 'SiCode' },
       ],
     },
     {
       title: 'Backend & Databases',
       skills: [
-        { name: 'Node.js / Express', Icon: SiIcons.SiNodedotjs || SiIcons.SiNodeDotJs || SiIcons.SiNodejs || SiIcons.SiNode || SiIcons.SiCode },
-        { name: 'Java', Icon: SiIcons.SiJava || SiIcons.SiCode },
-        { name: '.NET / C#', Icon: SiIcons.SiDotnet || SiIcons.SiDotNet || SiIcons.SiCode },
-        { name: 'Python', Icon: SiIcons.SiPython || SiIcons.SiCode },
-        { name: 'SQL', Icon: SiIcons.SiPostgresql || SiIcons.SiPostgres || SiIcons.SiCode },
-        { name: 'MongoDB', Icon: SiIcons.SiMongodb || SiIcons.SiMongod || SiIcons.SiCode },
+        { name: 'Node.js / Express', icon: 'SiNodedotjs' },
+        { name: 'Java', icon: 'SiJava' },
+        { name: '.NET / C#', icon: 'SiDotnet' },
+        { name: 'Python', icon: 'SiPython' },
+        { name: 'SQL', icon: 'SiPostgresql' },
+        { name: 'MongoDB', icon: 'SiMongodb' },
       ],
     },
     {
       title: 'Tools & Platforms',
       skills: [
-        { name: 'Git / GitHub', Icon: SiIcons.SiGithub || SiIcons.SiGit || SiIcons.SiCode },
-        { name: 'AWS', Icon: SiIcons.SiAmazonaws || SiIcons.SiAws || SiIcons.SiCode },
-        { name: 'Azure', Icon: SiIcons.SiMicrosoftazure || SiIcons.SiAzure || SiIcons.SiCode },
-        { name: 'REST APIs', Icon: SiIcons.SiXcode || SiIcons.SiCode },
-        { name: 'Postman', Icon: SiIcons.SiPostman || SiIcons.SiCode },
-        { name: 'VS Code', Icon: SiIcons.SiVisualstudiocode || SiIcons.SiVscode || SiIcons.SiCode },
+        { name: 'Git / GitHub', icon: 'SiGithub' },
+        { name: 'AWS', icon: 'SiAmazonaws' },
+        { name: 'Azure', icon: 'SiMicrosoftazure' },
+        { name: 'REST APIs', icon: 'SiCode' },
+        { name: 'Postman', icon: 'SiPostman' },
+        { name: 'VS Code', icon: 'SiVisualstudiocode' },
       ],
     },
   ];
@@ -77,7 +77,7 @@ export function SkillsSection() {
               <h3 className="text-xl font-semibold mb-6 text-accent">{category.title}</h3>
               <ul className="space-y-3">
                 {category.skills.map((skill, skillIndex) => {
-                  const Icon = skill.Icon || SiIcons.SiCode;
+                  const Icon = SiIcons[skill.icon] || SiIcons.SiCode;
                   return (
                     <motion.li
                       key={skill.name}
