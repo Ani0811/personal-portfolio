@@ -76,21 +76,24 @@ export function SkillsSection() {
               />
               <h3 className="text-xl font-semibold mb-6 text-accent">{category.title}</h3>
               <ul className="space-y-3">
-                {category.skills.map((skill, skillIndex) => (
-                  <motion.li
-                    key={skill.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{
-                      duration: 0.4,
-                      delay: categoryIndex * 0.1 + skillIndex * 0.05,
-                    }}
+                {category.skills.map((skill, skillIndex) => {
+                  const Icon = skill.Icon || SiIcons.SiCode;
+                  return (
+                    <motion.li
+                      key={skill.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={isInView ? { opacity: 1, x: 0 } : {}}
+                      transition={{
+                        duration: 0.4,
+                        delay: categoryIndex * 0.1 + skillIndex * 0.05,
+                      }}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group/item"
                     >
-                      <skill.Icon className="w-5 h-5 text-accent shrink-0" />
-                    <span>{skill.name}</span>
-                  </motion.li>
-                ))}
+                      <Icon className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                      <span>{skill.name}</span>
+                    </motion.li>
+                  );
+                })}
               </ul>
             </Card>
             </motion.div>
