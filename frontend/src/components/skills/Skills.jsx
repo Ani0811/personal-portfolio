@@ -15,7 +15,7 @@ export function SkillsSection() {
         { name: 'JavaScript', icon: 'SiJavascript' },
         { name: 'Tailwind CSS', icon: 'SiTailwindcss' },
         { name: 'HTML/CSS', icon: 'SiHtml5' },
-        { name: 'Responsive Design', icon: 'SiCode' },
+        { name: 'Responsive Design', icon: 'SiCss3' },
       ],
     },
     {
@@ -35,7 +35,7 @@ export function SkillsSection() {
         { name: 'Git / GitHub', icon: 'SiGithub' },
         { name: 'AWS', icon: 'SiAmazonaws' },
         { name: 'Azure', icon: 'SiMicrosoftazure' },
-        { name: 'REST APIs', icon: 'SiCode' },
+        { name: 'REST APIs', icon: 'SiSwagger' },
         { name: 'Postman', icon: 'SiPostman' },
         { name: 'VS Code', icon: 'SiVisualstudiocode' },
       ],
@@ -77,7 +77,7 @@ export function SkillsSection() {
               <h3 className="text-xl font-semibold mb-6 text-accent">{category.title}</h3>
               <ul className="space-y-3">
                 {category.skills.map((skill, skillIndex) => {
-                  const Icon = SiIcons[skill.icon] || SiIcons.SiCode;
+                  const Icon = SiIcons[skill.icon];
                   return (
                     <motion.li
                       key={skill.name}
@@ -89,7 +89,11 @@ export function SkillsSection() {
                       }}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group/item"
                     >
-                      <Icon className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                      {Icon ? (
+                        <Icon className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-accent shrink-0" aria-hidden="true" />
+                      )}
                       <span>{skill.name}</span>
                     </motion.li>
                   );
