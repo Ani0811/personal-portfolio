@@ -215,11 +215,20 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGIN_REGEXES = []
 
 # Email configuration
-# Use console backend for development, disable for production
+# Use console backend for development
+# For production: use SMTP if credentials are provided, otherwise fall back to console/dummy
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+    # In production, check if email credentials are configured
+    _email_user = os.getenv('EMAIL_HOST_USER', '')
+    _email_pass = os.getenv('EMAIL_HOST_PASSWORD', '')
+    if _email_user and _email_pass:
+        # Use SMTP backend when credentials are available
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    else:
+        # Fall back to console backend for logging (better than dummy for debugging)
+        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587

@@ -2,15 +2,22 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import ValidationError
 from django.conf import settings
 import logging
+import json
+import os
+from datetime import datetime
 from django.utils import timezone
 from zoneinfo import ZoneInfo
 from .models import ContactMessage
 from .serializers import ContactMessageSerializer
 
+logger = logging.getLogger(__name__)
+
 
 class ContactMessageViewSet(viewsets.ModelViewSet):
+    """Admin-only viewset for managing contact messages."""
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
 
@@ -22,55 +29,248 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
 
 
 class ContactCreateView(generics.CreateAPIView):
-    """POST-only endpoint to create contact messages (open to anyone)."""
+    """
+    POST-only endpoint to create contact messages (open to anyone).
+    
+    This view:
+    1. Validates all input fields thoroughly
+    2. Saves to database with error handling
+    3. Backs up to JSON file (production fallback)
+    4. Sends email notification (or logs if email unavailable)
+    5. Returns success response
+    """
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
     permission_classes = [permissions.AllowAny]
 
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
+    def _validate_contact_data(self, data):
+        """Additional validation beyond serializer."""
+        errors = {}
+        
+        # Validate name
+        name = data.get('name', '').strip()
+        if not name or len(name) < 2:
+            errors['name'] = 'Name must be at least 2 characters long.'
+        elif len(name) > 255:
+            errors['name'] = 'Name must not exceed 255 characters.'
+        
+        # Validate email
+        email = data.get('email', '').strip()
+        if not email:
+            errors['email'] = 'Email is required.'
+        elif len(email) > 254:
+            errors['email'] = 'Email address is too long.'
+        
+        # Validate message
+        message = data.get('message', '').strip()
+        if not message or len(message) < 10:
+            errors['message'] = 'Message must be at least 10 characters long.'
+        elif len(message) > 5000:
+            errors['message'] = 'Message must not exceed 5000 characters.'
+        
+        # Phone is optional but validate if provided
+        phone = data.get('phone_number', '').strip()
+        if phone and len(phone) > 30:
+            errors['phone_number'] = 'Phone number must not exceed 30 characters.'
+        
+        if errors:
+            raise ValidationError(errors)
+        
+        return {
+            'name': name,
+            'email': email,
+            'message': message,
+            'phone_number': phone
+        }
 
-        # Send email notification (best-effort). Skip if SMTP credentials are not configured.
+    def _backup_to_json(self, contact_data):
+        """
+        Backup contact message to JSON file as fallback.
+        Critical for production where SQLite might not persist.
+        """
         try:
-            contact_data = serializer.data
+            backup_dir = os.path.join(settings.BASE_DIR, 'contact_backups')
+            os.makedirs(backup_dir, exist_ok=True)
+            
+            backup_file = os.path.join(backup_dir, 'contact_messages.json')
+            
+            # Read existing messages
+            messages = []
+            if os.path.exists(backup_file):
+                try:
+                    with open(backup_file, 'r', encoding='utf-8') as f:
+                        messages = json.load(f)
+                except (json.JSONDecodeError, IOError):
+                    logger.warning("Could not read existing backup file, starting fresh")
+                    messages = []
+            
+            # Add new message with timestamp
+            contact_data['backup_timestamp'] = datetime.now().isoformat()
+            messages.append(contact_data)
+            
+            # Write back to file
+            with open(backup_file, 'w', encoding='utf-8') as f:
+                json.dump(messages, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Contact message backed up to JSON: {contact_data.get('email')}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to backup contact message to JSON: {e}", exc_info=True)
+            return False
+
+    def _log_contact_submission(self, contact_data):
+        """
+        Log contact submission to application logs.
+        This ensures we have a record even if database and JSON fail.
+        """
+        try:
+            log_message = (
+                f"\n{'='*80}\n"
+                f"CONTACT FORM SUBMISSION\n"
+                f"{'='*80}\n"
+                f"Name: {contact_data.get('name')}\n"
+                f"Email: {contact_data.get('email')}\n"
+                f"Phone: {contact_data.get('phone_number', 'N/A')}\n"
+                f"Message:\n{contact_data.get('message')}\n"
+                f"Timestamp: {contact_data.get('created_at')}\n"
+                f"{'='*80}\n"
+            )
+            logger.info(log_message)
+        except Exception as e:
+            logger.error(f"Failed to log contact submission: {e}")
+
+    def create(self, request):
+        """Handle contact form submission with comprehensive error handling."""
+        try:
+            # Step 1: Validate input data
+            validated_data = self._validate_contact_data(request.data)
+            
+            # Step 2: Save to database with error handling
+            serializer = self.get_serializer(data=validated_data)
+            serializer.is_valid(raise_exception=True)
+            
+            db_saved = False
+            try:
+                self.perform_create(serializer)
+                db_saved = True
+                logger.info(f"Contact message saved to database: {validated_data['email']}")
+            except Exception as db_error:
+                logger.error(f"Failed to save to database: {db_error}", exc_info=True)
+                # Continue anyway - we'll use backup methods
+            
+            # Step 3: Backup to JSON file (critical for production)
+            contact_data_for_backup = {
+                'id': serializer.instance.id if db_saved else None,
+                'name': validated_data['name'],
+                'email': validated_data['email'],
+                'phone_number': validated_data.get('phone_number', ''),
+                'message': validated_data['message'],
+                'created_at': serializer.instance.created_at.isoformat() if db_saved else datetime.now().isoformat(),
+                'db_saved': db_saved
+            }
+            self._backup_to_json(contact_data_for_backup)
+            
+            # Step 4: Log to application logs
+            self._log_contact_submission(contact_data_for_backup)
+            
+            # Step 5: Attempt to send email notification
+            headers = self.get_success_headers(serializer.data) if db_saved else {}
+
+            # Step 5: Attempt to send email notification
+            headers = self.get_success_headers(serializer.data) if db_saved else {}
+            self._send_email_notification(contact_data_for_backup)
+            
+            # Step 6: Return success response
+            response_data = {
+                'success': True,
+                'message': 'Your message has been received successfully. We will get back to you soon!',
+                'data': serializer.data if db_saved else {
+                    'name': validated_data['name'],
+                    'email': validated_data['email'],
+                    'message': 'Message received and logged'
+                }
+            }
+            
+            return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+            
+        except ValidationError as ve:
+            logger.warning(f"Validation error in contact form: {ve}")
+            return Response(
+                {'success': False, 'errors': ve.message_dict if hasattr(ve, 'message_dict') else str(ve)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            logger.error(f"Unexpected error processing contact form: {e}", exc_info=True)
+            return Response(
+                {'success': False, 'message': 'An error occurred while processing your message. Please try again later.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def _send_email_notification(self, contact_data):
+        """
+        Send email notification about new contact message.
+        Falls back to logging if email is not configured or fails.
+        """
+    def _send_email_notification(self, contact_data):
+        """
+        Send email notification about new contact message.
+        Falls back to logging if email is not configured or fails.
+        """
+        try:
             name = contact_data.get('name', 'Unknown')
             email = contact_data.get('email', 'N/A')
             phone = contact_data.get('phone_number', 'N/A')
             message_text = contact_data.get('message', 'N/A')
-            # Prefer the model instance datetime (aware) and format it nicely in IST;
-            # fall back to serialized string if unavailable.
-            created_dt = getattr(serializer.instance, 'created_at', None)
-            if created_dt:
-                try:
-                    # Convert to Asia/Kolkata (IST) and format as DD-MM-YYYY with time
+            created_at_str = contact_data.get('created_at', 'N/A')
+            
+            # Format timestamp nicely
+            try:
+                if isinstance(created_at_str, str):
+                    created_dt = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
                     created_ist = created_dt.astimezone(ZoneInfo('Asia/Kolkata'))
                     created_at = created_ist.strftime('%d-%m-%Y %H:%M %Z')
-                except Exception:
-                    # Fallback to localtime formatting if zone conversion fails
-                    created_local = timezone.localtime(created_dt)
-                    created_at = created_local.strftime('%d-%m-%Y %H:%M:%S')
-            else:
-                created_at = contact_data.get('created_at', 'N/A')
+                else:
+                    created_at = str(created_at_str)
+            except Exception:
+                created_at = created_at_str
             
+            # Check if email is properly configured
+            smtp_user = getattr(settings, 'EMAIL_HOST_USER', '')
+            smtp_pass = getattr(settings, 'EMAIL_HOST_PASSWORD', '')
+            email_backend = getattr(settings, 'EMAIL_BACKEND', '')
+            
+            # Log email status
+            if 'dummy' in email_backend.lower():
+                logger.warning(
+                    f"Email backend is set to dummy. Contact message from {email} will be logged only.\n"
+                    f"To enable email, configure EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in production."
+                )
+                return
+            
+            if not smtp_user or not smtp_pass:
+                logger.warning(
+                    f"SMTP not configured. Contact message from {email} logged but not emailed.\n"
+                    f"Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD environment variables."
+                )
+                return
+            
+            # Prepare email content
             subject = f"🔔 New Contact Form Submission from {name}"
             
             # Plain text version
             text_content = f"""
-            You have received a new contact form submission:
+You have received a new contact form submission:
 
-            Name: {name}
-            Email: {email}
-            Phone: {phone}
+Name: {name}
+Email: {email}
+Phone: {phone}
 
-            Message:
-            {message_text}
+Message:
+{message_text}
 
-            ---
-            Submitted at: {created_at}
-            """
+---
+Database Status: {'Saved' if contact_data.get('db_saved') else 'Backup only'}
+"""
             
             # HTML version with modern design
             html_content = f"""
@@ -202,29 +402,20 @@ class ContactCreateView(generics.CreateAPIView):
             </html>
             """
             
-            # Send email to yourself only if SMTP settings exist
-            recipient_email = settings.EMAIL_HOST_USER
-            smtp_user = getattr(settings, 'EMAIL_HOST_USER', '')
-            smtp_pass = getattr(settings, 'EMAIL_HOST_PASSWORD', '')
-            logger = logging.getLogger(__name__)
-
-            if recipient_email and smtp_user and smtp_pass:
-                try:
-                    msg = EmailMultiAlternatives(
-                        subject=subject,
-                        body=text_content,
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        to=[recipient_email]
-                    )
-                    msg.attach_alternative(html_content, "text/html")
-                    # Best-effort send; don't allow SMTP errors to break the API.
-                    msg.send(fail_silently=True)
-                except Exception as send_err:
-                    logger.warning("ContactCreateView: failed to send email notification: %s", send_err)
-            else:
-                logger.info("ContactCreateView: SMTP not configured, skipping email send.")
+            # Attempt to send email
+            try:
+                recipient_email = settings.EMAIL_HOST_USER
+                msg = EmailMultiAlternatives(
+                    subject=subject,
+                    body=text_content,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[recipient_email]
+                )
+                msg.attach_alternative(html_content, "text/html")
+                msg.send(fail_silently=False)
+                logger.info(f"Email notification sent successfully to {recipient_email}")
+            except Exception as send_err:
+                logger.error(f"Failed to send email notification: {send_err}", exc_info=True)
+                
         except Exception as e:
-            # Log any unexpected error but don't fail the request
-            logging.getLogger(__name__).exception("Failed to prepare/send contact email: %s", e)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            logger.error(f"Error in email notification process: {e}", exc_info=True)
