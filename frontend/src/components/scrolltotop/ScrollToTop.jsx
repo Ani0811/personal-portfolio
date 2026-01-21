@@ -34,8 +34,8 @@ export function ScrollToTop() {
           onClick={scrollToTop}
           className="fixed bottom-8 right-4 sm:bottom-8 sm:right-8 z-60 p-2 sm:p-3 rounded-lg shadow-lg hover:opacity-90 transition-opacity"
           style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-foreground)', border: 'none', cursor: 'pointer' }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           aria-label="Scroll to top"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

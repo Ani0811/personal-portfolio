@@ -1,6 +1,26 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { SectionHeader, Card } from '../common';
+import {
+  SiReact,
+  SiJavascript,
+  SiTailwindcss,
+  SiHtml5,
+  SiCss3,
+  SiNodeDotJs,
+  SiJava,
+  SiDotnet,
+  SiPython,
+  SiPostgresql,
+  SiMongodb,
+  SiGithub,
+  SiAmazonaws,
+  SiMicrosoftazure,
+  SiPostman,
+  SiVisualstudiocode,
+  SiGit,
+  SiCode
+} from 'react-icons/si';
 
 export function SkillsSection() {
   const ref = useRef(null);
@@ -10,33 +30,33 @@ export function SkillsSection() {
     {
       title: 'Frontend',
       skills: [
-        'React.js',
-        'JavaScript',
-        'Tailwind CSS',
-        'HTML/CSS',
-        'Responsive Design',
+        { name: 'React.js', Icon: SiReact },
+        { name: 'JavaScript', Icon: SiJavascript },
+        { name: 'Tailwind CSS', Icon: SiTailwindcss },
+        { name: 'HTML/CSS', Icon: SiHtml5 },
+        { name: 'Responsive Design', Icon: SiCode },
       ],
     },
     {
       title: 'Backend & Databases',
       skills: [
-        'Node.js / Express',
-        'Java',
-        '.NET / C#',
-        'Python',
-        'SQL',
-        'MongoDB',
+        { name: 'Node.js / Express', Icon: SiNodeDotJs },
+        { name: 'Java', Icon: SiJava },
+        { name: '.NET / C#', Icon: SiDotnet },
+        { name: 'Python', Icon: SiPython },
+        { name: 'SQL', Icon: SiPostgresql },
+        { name: 'MongoDB', Icon: SiMongodb },
       ],
     },
     {
       title: 'Tools & Platforms',
       skills: [
-        'Git / GitHub',
-        'AWS',
-        'Azure',
-        'REST APIs',
-        'Postman',
-        'VS Code',
+        { name: 'Git / GitHub', Icon: SiGithub },
+        { name: 'AWS', Icon: SiAmazonaws },
+        { name: 'Azure', Icon: SiMicrosoftazure },
+        { name: 'REST APIs', Icon: SiCode },
+        { name: 'Postman', Icon: SiPostman },
+        { name: 'VS Code', Icon: SiVisualstudiocode },
       ],
     },
   ];
@@ -77,7 +97,7 @@ export function SkillsSection() {
               <ul className="space-y-3">
                 {category.skills.map((skill, skillIndex) => (
                   <motion.li
-                    key={skill}
+                    key={skill.name}
                     initial={{ opacity: 0, x: -20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{
@@ -86,8 +106,8 @@ export function SkillsSection() {
                     }}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group/item"
                     >
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent group-hover/item:scale-125 transition-transform" />
-                    <span>{skill}</span>
+                      <skill.Icon className="w-5 h-5 text-accent shrink-0" />
+                    <span>{skill.name}</span>
                   </motion.li>
                 ))}
               </ul>
