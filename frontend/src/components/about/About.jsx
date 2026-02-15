@@ -65,7 +65,7 @@ export function AboutSection() {
                 variant="outline"
                 size="lg"
                 className="mt-6 hover:scale-105 transition-transform"
-                href="/Anirudha_Basu_Thakur_Resume.pdf"
+                href="/assets/Anirudha_Basu_Thakur_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 animate
