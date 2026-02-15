@@ -1,33 +1,31 @@
 # Copilot instructions — personal-portfolio
 
 Goal
-- Fullstack personal portfolio: Django backend in `backend/` and React (Vite) frontend in `frontend/`.
+- Fullstack personal portfolio: Node.js/Express backend in `server/` and React (Vite) frontend in `frontend/`.
 - Preserve backwards-compatible API changes. Prefer non-breaking changes under `/api/`.
 
 Quick dev commands
-- Backend (Windows PowerShell):
-  - `cd backend`
-  - `python -m venv venv`
-  - `.\venv\Scripts\Activate.ps1`
-  - `python -m pip install --upgrade pip`
-  - `pip install -r requirements.txt`
-  - `python manage.py makemigrations && python manage.py migrate && python manage.py runserver`
+- Backend:
+  - `cd server`
+  - `cp .env.example .env` (then fill in values)
+  - `npm install`
+  - `npm run migrate`
+  - `npm run dev`
 - Frontend:
   - `cd frontend`
   - `npm install`
   - `npm run dev`
 
 Key files & patterns (start here)
-- Backend: `backend/contact/models.py`, `contact/serializers.py`, `contact/views.py`, `contact/urls.py` (contact message model + API).
-- Settings & routing: `backend/config/settings.py`, `backend/config/urls.py`.
-- Admin registration: `backend/contact/admin.py`.
+- Backend: `server/src/index.js` (Express entry), `server/src/routes/contact.js`, `server/src/routes/admin.js`, `server/src/db/migrate.js`, `server/src/services/email.js`.
+- Auth middleware: `server/src/middleware/auth.js` (JWT).
 - Frontend: `frontend/src/index.css`, `frontend/postcss.config.js`, `frontend/tailwind.config.js`, `frontend/src/App.jsx`, `frontend/index.html`.
-- Ignore secrets: `.env` and `backend/venv` must not be committed; see `backend/.gitignore`.
+- Ignore secrets: `.env` and `node_modules/` must not be committed; see `server/.gitignore`.
 
 API surface & auth rules
-- POST `/api/contact` — public create (AllowAny).
-- `/api/contact-messages/` — admin-only ModelViewSet (IsAdminUser) for list/retrieve/update/delete.
-- Admin UI available at `/admin/`.
+- POST `/api/contact/` — public create.
+- POST `/api/admin/login` — admin login, returns JWT.
+- `/api/admin/contact-messages` — JWT-protected admin routes for list/retrieve/update/delete.
 
 Build & tooling notes
 - Tailwind is processed via PostCSS and uses `@tailwindcss/postcss` in `postcss.config.js`.

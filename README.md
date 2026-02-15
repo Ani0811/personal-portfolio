@@ -1,6 +1,6 @@
 # Personal Portfolio
 
-A modern, full-stack personal portfolio website showcasing projects, skills, and professional experience. Built with Django REST Framework backend and React (Vite) frontend, featuring a bold, art-driven UI with dynamic animations and theme support.
+A modern, full-stack personal portfolio website showcasing projects, skills, and professional experience. Built with a Node.js/Express backend and React (Vite) frontend, featuring a bold, art-driven UI with dynamic animations and theme support.
 
 ## 🚀 Live Demo
 
@@ -22,13 +22,11 @@ A modern, full-stack personal portfolio website showcasing projects, skills, and
 - **Contact Form**: Real-time validation and API integration
 
 ### Backend
-- **Django REST Framework**: Robust API for contact form submissions
-- **Admin Dashboard**: Full-featured Django admin for managing contact messages
-- **SQLite Database**: Lightweight, serverless database solution
-- **CORS Configuration**: Secure cross-origin resource sharing
-- **Email Integration**: Optional email notifications for contact form submissions
-- **Security Features**: HTTPS enforcement, HSTS, CSP headers in production
-- **WhiteNoise**: Efficient static file serving
+- **Node.js + Express**: Fast, lightweight API for contact form submissions
+- **MySQL Database**: Reliable relational database for contact messages
+- **JWT Authentication**: Secure admin API with token-based auth
+- **Nodemailer**: HTML email notifications via Gmail SMTP
+- **CORS + Helmet**: Secure cross-origin handling and HTTP headers
 - **Environment-based Configuration**: Separate settings for development and production
 
 ## 🛠️ Tech Stack
@@ -43,13 +41,13 @@ A modern, full-stack personal portfolio website showcasing projects, skills, and
 - **Icons**: Custom SVG icons
 
 ### Backend
-- **Framework**: Django 6.0.1
-- **API**: Django REST Framework 3.15.0
-- **Database**: SQLite
-- **CORS**: django-cors-headers 4.9.0
-- **Static Files**: WhiteNoise 6.11.0
-- **Server**: Gunicorn 23.0.0
-- **Environment**: python-dotenv 1.0.0
+- **Runtime**: Node.js 18+
+- **Framework**: Express 4
+- **Database**: MySQL (mysql2)
+- **Auth**: JSON Web Tokens (jsonwebtoken + bcryptjs)
+- **Email**: Nodemailer
+- **Security**: Helmet, CORS
+- **Validation**: express-validator
 
 ### DevOps
 - **Frontend Hosting**: Vercel
@@ -60,21 +58,22 @@ A modern, full-stack personal portfolio website showcasing projects, skills, and
 
 ```
 personal-portfolio/
-├── backend/                    # Django backend
-│   ├── config/                # Django settings and configuration
-│   │   ├── settings.py       # Main settings file
-│   │   ├── urls.py           # Root URL configuration
-│   │   └── wsgi.py           # WSGI application
-│   ├── contact/               # Contact app
-│   │   ├── models.py         # ContactMessage model
-│   │   ├── serializers.py    # DRF serializers
-│   │   ├── views.py          # API views
-│   │   ├── urls.py           # Contact app URLs
-│   │   └── admin.py          # Admin configuration
-│   ├── manage.py             # Django management script
-│   ├── requirements.txt      # Python dependencies
-│   ├── build.sh              # Render deployment script
-│   └── db.sqlite3            # SQLite database
+├── server/                     # Node.js/Express backend
+│   ├── src/
+│   │   ├── index.js           # Express app entry point
+│   │   ├── db/
+│   │   │   ├── connection.js  # MySQL pool
+│   │   │   └── migrate.js     # Schema migrations + admin seed
+│   │   ├── routes/
+│   │   │   ├── contact.js     # Public contact API
+│   │   │   └── admin.js       # Admin API (JWT protected)
+│   │   ├── middleware/
+│   │   │   └── auth.js        # JWT auth middleware
+│   │   └── services/
+│   │       └── email.js       # Nodemailer email service
+│   ├── package.json           # Node dependencies
+│   ├── build.sh               # Render deployment script
+│   └── .env.example           # Environment template
 │
 ├── frontend/                  # React frontend
 │   ├── src/
@@ -108,40 +107,30 @@ personal-portfolio/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Python 3.11+**
 - **Node.js 18+**
-- **npm or yarn**
+- **npm**
+- **MySQL 8+** (local or cloud — e.g. PlanetScale, Aiven, Railway)
 
-### Backend Setup (Windows PowerShell)
+### Backend Setup
 
-```powershell
-# Navigate to backend directory
-cd backend
+```bash
+# Navigate to server directory
+cd server
 
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-.\venv\Scripts\Activate.ps1
-
-# Upgrade pip
-python -m pip install --upgrade pip
+# Copy env template and fill in your values
+cp .env.example .env
 
 # Install dependencies
-pip install -r requirements.txt
+npm install
 
-# Run migrations
-python manage.py makemigrations
-python manage.py migrate
+# Run migrations (creates tables + optional admin user)
+npm run migrate
 
-# Create superuser (optional)
-python manage.py createsuperuser
-
-# Start development server
-python manage.py runserver
+# Start development server (auto-restarts on file changes)
+npm run dev
 ```
 
-Backend will be available at `http://127.0.0.1:8000/`
+Backend will be available at `http://localhost:8000/`
 
 ### Frontend Setup
 
@@ -162,20 +151,35 @@ Frontend will be available at `http://localhost:5173/`
 
 ### Backend Environment Variables
 
-Create a `.env` file in the `backend/` directory:
+Create a `.env` file in the `server/` directory (see `.env.example`):
 
 ```env
-# Django
-DJANGO_SECRET_KEY=your-secret-key-here
-DJANGO_DEBUG=True
-DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+# Server
+PORT=8000
+NODE_ENV=development
+
+# MySQL
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=portfolio
+
+# JWT
+JWT_SECRET=your-random-secret-here
+
+# Admin user (auto-created on migrate)
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=changeme123
 
 # CORS
 FRONTEND_URL=http://localhost:5173
 
-# Email (optional)
-EMAIL_HOST_USER=your-email@example.com
+# Email — Gmail SMTP (optional)
+EMAIL_HOST_USER=your-email@gmail.com
 EMAIL_HOST_PASSWORD=your-app-password
+CONTACT_NOTIFICATION_EMAIL=your-email@gmail.com
 ```
 
 ### Frontend Configuration
@@ -191,14 +195,12 @@ Modify API endpoints in your axios configuration if needed.
 ### Public Endpoints
 - `POST /api/contact/` - Submit contact form (AllowAny)
 
-### Admin Endpoints (Authentication Required)
-- `GET /api/contact-messages/` - List all contact messages
-- `GET /api/contact-messages/{id}/` - Retrieve specific message
-- `PUT /api/contact-messages/{id}/` - Update message
-- `DELETE /api/contact-messages/{id}/` - Delete message
-
-### Admin Panel
-- `/admin/` - Django admin interface
+### Admin Endpoints (JWT Authentication Required)
+- `POST /api/admin/login` - Login and receive JWT token
+- `GET /api/admin/contact-messages` - List all contact messages
+- `GET /api/admin/contact-messages/:id` - Retrieve specific message
+- `PUT /api/admin/contact-messages/:id` - Update message (mark read, etc.)
+- `DELETE /api/admin/contact-messages/:id` - Delete message
 
 ## 🎨 Design System
 
@@ -236,26 +238,34 @@ vercel --prod
 
 1. Connect your GitHub repository to Render
 2. Create a new Web Service
-3. **Build Command**: `./build.sh`
-4. **Start Command**: `gunicorn config.wsgi:application`
+3. **Root Directory**: `server`
+4. **Build Command**: `./build.sh`
+5. **Start Command**: `node src/index.js`
 
 **Environment Variables on Render**:
 ```
-DJANGO_SECRET_KEY=your-production-secret-key
-DJANGO_DEBUG=False
-DJANGO_ALLOWED_HOSTS=personal-portfolio-gsee.onrender.com
+NODE_ENV=production
+PORT=8000
+DB_HOST=your-mysql-host
+DB_PORT=3306
+DB_USER=your-db-user
+DB_PASSWORD=your-db-password
+DB_NAME=portfolio
+JWT_SECRET=your-production-secret
 FRONTEND_URL=https://personal-portfolio-three-delta-53.vercel.app
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=your-admin-password
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
 ```
 
 ## 🔒 Security Features
 
 ### Production Settings
-- HTTPS enforcement (`SECURE_SSL_REDIRECT`)
-- Secure cookies (`SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`)
-- HTTP Strict Transport Security (HSTS)
-- Content Security headers
-- XSS protection
-- Clickjacking protection (X-Frame-Options)
+- Helmet.js for secure HTTP headers (CSP, HSTS, X-Frame-Options, etc.)
+- JWT-based admin authentication with bcrypt password hashing
+- Input validation via express-validator
 
 ### CORS Configuration
 - Whitelist-based origin validation
@@ -272,18 +282,6 @@ FRONTEND_URL=https://personal-portfolio-three-delta-53.vercel.app
 - Timestamps in IST timezone
 - HTML email templates with modern design
 
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-python manage.py test
-
-# Frontend tests (if configured)
-cd frontend
-npm run test
-```
-
 ## 📦 Build for Production
 
 ### Frontend
@@ -298,11 +296,10 @@ Output will be in `frontend/dist/`
 ### Backend
 
 ```bash
-cd backend
-python manage.py collectstatic --noinput
+cd server
+npm ci --production
+npm run migrate
 ```
-
-Static files will be in `backend/staticfiles/`
 
 ## 🤝 Contributing
 
@@ -326,7 +323,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- Django and Django REST Framework communities
+- Node.js, Express, and MySQL communities
 - React and Vite teams
 - Tailwind CSS and Framer Motion
 - Vercel and Render for hosting platforms
