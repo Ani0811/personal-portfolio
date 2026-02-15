@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { ContactMessage } = require('../db/queries');
-const { sendNotification } = require('../services/email');
+const { sendNotification, sendAutoReply } = require('../services/email');
 
 const router = express.Router();
 
@@ -41,6 +41,10 @@ router.post('/contact/', contactValidation, async (req, res) => {
 
     sendNotification(saved).catch((err) => {
       console.error('[EMAIL] Notification failed:', err.message);
+    });
+
+    sendAutoReply(saved).catch((err) => {
+      console.error('[EMAIL] Auto-reply failed:', err.message);
     });
 
     return res.status(201).json({
