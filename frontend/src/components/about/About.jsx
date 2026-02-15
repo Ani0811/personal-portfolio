@@ -46,20 +46,18 @@ export function AboutSection() {
           >
             <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
               <p>
-                I'm a <span className="emphasis">BCA graduate</span> with hands-on experience in
-                full-stack development, including <span className="emphasis">
-                <span className="primary-highlight">.NET</span>, Java frameworks, Python frameworks,
-                SQL, MongoDB, <span className="highlight">Node.js</span>, <span className="highlight">React.js</span>, and Express</span>.
-                I've completed multiple freelance and evaluation projects that demonstrate my problem-solving skills and attention to detail.
+                I'm an entry-level software developer who builds and deploys full‑stack web
+                applications using modern JavaScript technologies such as React and Node.js,
+                with practical experience integrating MongoDB for data persistence.
               </p>
               <p>
-                My approach focuses on delivering <span className="emphasis">end-to-end solutions</span> that 
-                combine functionality with seamless user experience. From database design to responsive frontends, I build 
-                applications that are both scalable and maintainable.
+                I have a strong foundation in programming fundamentals, REST API design,
+                and database modelling. I focus on writing clean, testable code and solving
+                real-world problems with pragmatic, maintainable solutions.
               </p>
               <p>
-                Currently seeking opportunities as a <span className="highlight">Junior Software Developer</span> where 
-                I can contribute to a dynamic team, continue learning, and grow alongside innovative projects.
+                I'm eager to contribute to enterprise-scale projects, collaborate with teams,
+                and continue learning new tools and frameworks to ship reliable, production‑grade software.
               </p>
               <Button
                 variant="outline"
