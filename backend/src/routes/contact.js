@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { pool } = require('../db/connection');
+const { ContactMessage } = require('../db/queries');
 const { sendNotification } = require('../services/email');
 
 const router = express.Router();
@@ -37,17 +37,7 @@ router.post('/contact/', contactValidation, async (req, res) => {
   const { name, email, message, phone_number = '' } = req.body;
 
   try {
-    const [result] = await pool.query(
-      `INSERT INTO contact_messages (name, email, message, phone_number)
-       VALUES (?, ?, ?, ?)`,
-      [name, email, message, phone_number],
-    );
-
-    const [rows] = await pool.query(
-      'SELECT * FROM contact_messages WHERE id = ?',
-      [result.insertId],
-    );
-    const saved = rows[0];
+    const saved = await ContactMessage.create({ name, email, message, phone_number });
 
     sendNotification(saved).catch((err) => {
       console.error('[EMAIL] Notification failed:', err.message);

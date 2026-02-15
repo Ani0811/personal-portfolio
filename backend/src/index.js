@@ -5,7 +5,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { pool, testConnection } = require('./db/connection');
 const contactRoutes = require('./routes/contact');
-const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -33,7 +32,6 @@ app.use(express.json({ limit: '1mb' }));
 // --------------- Routes ---------------
 
 app.use('/api', contactRoutes);
-app.use('/api/admin', adminRoutes);
 
 app.get('/', (_req, res) => {
   res.json({ status: 'ok', message: 'Portfolio API is running' });
