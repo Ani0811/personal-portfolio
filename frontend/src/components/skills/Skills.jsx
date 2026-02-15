@@ -9,35 +9,58 @@ export function SkillsSection() {
 
   const skillCategories = [
     {
-      title: 'Frontend',
+      title: 'Programming Languages',
+      skills: [
+        { name: 'Python', icon: 'SiPython' },
+        { name: 'JavaScript (ES6+)', icon: 'SiJavascript' },
+        { name: 'Java', icon: 'SiJava' },
+        { name: 'C#', icon: 'SiCsharp' },
+        { name: 'C++', icon: 'SiCplusplus' },
+        { name: 'PHP', icon: 'SiPhp' },
+        { name: 'SQL', icon: 'SiMysql' },
+      ],
+    },
+    {
+      title: 'Frontend Development',
       skills: [
         { name: 'React.js', icon: 'SiReact' },
-        { name: 'JavaScript', icon: 'SiJavascript' },
-        { name: 'Tailwind CSS', icon: 'SiTailwindcss' },
+        { name: 'Next.js', icon: 'SiNextdotjs' },
+        { name: 'TailwindCSS', icon: 'SiTailwindcss' },
         { name: 'HTML/CSS', icon: 'SiHtml5' },
-        { name: 'Responsive Design', icon: 'SiCss3' },
       ],
     },
     {
-      title: 'Backend & Databases',
+      title: 'Backend & Frameworks',
       skills: [
-        { name: 'Node.js / Express', icon: 'SiNodedotjs' },
-        { name: 'Java', icon: 'SiJava' },
-        { name: '.NET / C#', icon: 'SiDotnet' },
-        { name: 'Python', icon: 'SiPython' },
-        { name: 'SQL', icon: 'SiPostgresql' },
+        { name: 'Node.js', icon: 'SiNodedotjs' },
+        { name: 'Express.js', icon: 'SiExpress' },
+        { name: '.NET', icon: 'SiDotnet' },
+        { name: 'Spring Boot', icon: 'SiSpring' },
+        { name: 'Django', icon: 'SiDjango' },
+        { name: 'Java Server Pages (JSP)', icon: 'SiJava' },
+      ],
+    },
+    {
+      title: 'Databases',
+      skills: [
         { name: 'MongoDB', icon: 'SiMongodb' },
+        { name: 'MongoDB Atlas', icon: 'SiMongodb' },
+        { name: 'MySQL', icon: 'SiMysql' },
+        { name: 'PostgreSQL', icon: 'SiPostgresql' },
+        { name: 'SQL Server', icon: 'SiMicrosoftsqlserver' },
+        { name: 'Oracle', icon: 'SiOracle' },
       ],
     },
     {
-      title: 'Tools & Platforms',
+      title: 'Tools & Integration',
       skills: [
-        { name: 'Git / GitHub', icon: 'SiGithub' },
-        { name: 'AWS', icon: 'SiAmazonaws' },
-        { name: 'Azure', icon: 'SiMicrosoftazure' },
+        { name: 'Git & GitHub', icon: 'SiGithub' },
         { name: 'REST APIs', icon: 'SiSwagger' },
-        { name: 'Postman', icon: 'SiPostman' },
-        { name: 'VS Code', icon: 'SiVisualstudiocode' },
+        { name: 'Socket.IO', icon: 'SiSocketdotio' },
+        { name: 'Firebase', icon: 'SiFirebase' },
+        { name: 'Razorpay', icon: 'SiRazorpay' },
+        { name: 'Stripe', icon: 'SiStripe' },
+        { name: 'JDBC / ODBC', icon: 'SiOracle' },
       ],
     },
   ];
@@ -48,11 +71,12 @@ export function SkillsSection() {
         <SectionHeader
           label="Tech Stack"
           title="Skills & Technologies"
+          description="Comprehensive full-stack development expertise across languages, frameworks, and platforms"
           animate
           isInView={isInView}
         />
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {skillCategories.map((category, categoryIndex) => (
             <motion.div
               key={category.title}
@@ -112,7 +136,7 @@ export function SkillsSection() {
           className="mt-12 text-center"
         >
           <p className="text-muted-foreground italic">
-            Always learning, always building. These are the tools I use to ship real products.
+            Full-stack expertise with modern frameworks, databases, and cloud technologies. Ready to build scalable solutions.
           </p>
         </motion.div>
       </div>
