@@ -27,6 +27,27 @@ export function CertificationsSection() {
       org: 'Forage',
       issued: 'Dec 2025',
     },
+    {
+      id: 'tata-genai-sim',
+      title: 'Tata - GenAI Powered Data Analytics Job Simulation',
+      file: '/assets/certs/Tata_GenAI.pdf',
+      org: 'Forage',
+      issued: 'Feb 2026',
+    },
+    {
+      id: 'cb-cybersecurity-sim',
+      title: 'Commonwealth Bank - Introduction to Cybersecurity Job Simulation',
+      file: '/assets/certs/CB_CyberSecurity.pdf',
+      org: 'Forage',
+      issued: 'Feb 2026',
+    },
+    {
+      id: 'bcg-genai-sim',
+      title: 'BCG - GenAI Job Simulation',
+      file: '/assets/certs/BCG_GenAI.pdf',
+      org: 'Forage',
+      issued: 'Feb 2026',
+    },
   ];
 
   const ref = useRef(null);
