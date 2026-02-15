@@ -1,9 +1,44 @@
 const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
 
-function createTransporter() {
+async function createTransporter() {
+  const oauthClientId = process.env.EMAIL_OAUTH_CLIENT_ID;
+  const oauthClientSecret = process.env.EMAIL_OAUTH_CLIENT_SECRET;
+  const oauthRefreshToken = process.env.EMAIL_OAUTH_REFRESH_TOKEN;
   const user = process.env.EMAIL_HOST_USER;
-  const pass = process.env.EMAIL_HOST_PASSWORD;
 
+  // Prefer OAuth2 if configured
+  if (oauthClientId && oauthClientSecret && oauthRefreshToken && user) {
+    try {
+      const oAuth2Client = new google.auth.OAuth2(
+        oauthClientId,
+        oauthClientSecret,
+        'https://developers.google.com/oauthplayground'
+      );
+      oAuth2Client.setCredentials({ refresh_token: oauthRefreshToken });
+      const accessTokenRes = await oAuth2Client.getAccessToken();
+      const accessToken = accessTokenRes && accessTokenRes.token ? accessTokenRes.token : accessTokenRes;
+
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user,
+          clientId: oauthClientId,
+          clientSecret: oauthClientSecret,
+          refreshToken: oauthRefreshToken,
+          accessToken,
+        },
+        tls: { rejectUnauthorized: false },
+      });
+    } catch (err) {
+      console.error('[EMAIL] OAuth2 transporter creation failed:', err.message);
+      // fall through to SMTP fallback
+    }
+  }
+
+  // SMTP fallback (username/password)
+  const pass = process.env.EMAIL_HOST_PASSWORD;
   if (!user || !pass) return null;
 
   return nodemailer.createTransport({
@@ -183,7 +218,7 @@ function buildAutoReplyHtml(contact) {
 /* ─────────────── Send Functions ─────────────── */
 
 async function sendNotification(contact) {
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
   if (!transporter) {
     console.log('[EMAIL] No SMTP credentials configured — skipping notification.');
     return;
@@ -210,7 +245,7 @@ async function sendNotification(contact) {
 }
 
 async function sendAutoReply(contact) {
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
   if (!transporter) {
     console.log('[EMAIL] No SMTP credentials configured — skipping auto-reply.');
     return;
