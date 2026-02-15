@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { SectionHeader, Card } from '../common';
 import * as SiIcons from 'react-icons/si';
+import { SiJava } from 'react-icons/si';
 
 export function SkillsSection() {
   const ref = useRef(null);
@@ -113,11 +114,11 @@ export function SkillsSection() {
                       }}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group/item"
                     >
-                      {Icon ? (
-                        <Icon className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
-                      ) : (
-                        <div className="w-5 h-5 rounded-full bg-accent shrink-0" aria-hidden="true" />
-                      )}
+                          {Icon ? (
+                            <Icon className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                          ) : (
+                            <SiJava className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />
+                          )}
                       <span>{skill.name}</span>
                     </motion.li>
                   );
