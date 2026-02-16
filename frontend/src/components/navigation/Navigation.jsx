@@ -194,28 +194,6 @@ export function Navigation({ activeSection }) {
                   Contact Me
                 </Button>
 
-                {/* Social Links at bottom */}
-                <div className="mt-auto pt-8 border-t border-border">
-                  <p className="text-xs text-muted-foreground mb-3">Connect with me</p>
-                  <div className="flex gap-3">
-                    <a
-                      href="https://github.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-accent transition-colors text-sm"
-                    >
-                      GitHub
-                    </a>
-                    <a
-                      href="https://linkedin.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-accent transition-colors text-sm"
-                    >
-                      LinkedIn
-                    </a>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </>
