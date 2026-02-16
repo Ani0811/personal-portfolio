@@ -159,7 +159,7 @@ export function Navigation({ activeSection, onMobileMenuChange }) {
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
                           <img src="/assets/icons/ABT_Logo.svg" alt="ABT Logo" className="w-full h-full object-cover" />
                         </div>
-                        <span className="text-lg font-semibold">ABT</span>
+                        <span className="sr-only">Home</span>
                       </button>
                   </div>
                   <button
