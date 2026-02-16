@@ -171,7 +171,9 @@ export function ContactSection() {
 
             <div className="p-4 border border-border rounded-lg bg-card/40 space-y-4 h-full">
               <a
-                href="mailto:anirudha.basuthakur@gmail.com"
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=anirudha.basuthakur@gmail.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-start gap-3 text-muted-foreground hover:text-accent transition-colors group"
               >
                 <div className="w-10 h-10 rounded-none border border-border bg-accent/10 text-accent flex items-center justify-center group-hover:bg-accent/20 transition-colors">
@@ -210,7 +212,7 @@ export function ContactSection() {
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.85-3.036-1.851 0-2.134 1.445-2.134 2.939v5.666H9.352V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.369-1.85 3.602 0 4.268 2.37 4.268 5.456v6.285zM5.337 7.433a2.066 2.066 0 11.001-4.131 2.066 2.066 0 01-.001 4.131zM7.119 20.452H3.554V9h3.565v11.452z" />
                   </svg>
                 </div>
-                <span>LinkedIn Profile</span>
+                <span>Anirudha Basu Thakur</span>
               </a>
 
               <a
@@ -226,7 +228,7 @@ export function ContactSection() {
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                   </svg>
                 </div>
-                <span>Instagram Profile</span>
+                <span>this_is_ringo_here</span>
               </a>  
               
               <a
@@ -240,7 +242,7 @@ export function ContactSection() {
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.775.418-1.305.76-1.605-2.665-.305-5.466-1.332-5.466-5.931 0-1.31.47-2.381 1.235-3.221-.135-.303-.54-1.524.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.874.12 3.176.765.84 1.23 1.911 1.23 3.221 0 4.61-2.805 5.625-5.475 5.921.435.375.825 1.11.825 2.235 0 1.615-.015 2.915-.015 3.31 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12 24 5.37 18.63 0 12 0z" />
                   </svg>
                 </div>
-                <span>GitHub Profile</span>
+                <span>Ani0811</span>
               </a>
               
               <div className="flex items-center gap-3 text-muted-foreground">
