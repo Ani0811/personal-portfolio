@@ -13,9 +13,15 @@ const navItems = [
   { id: 'contact', label: 'Contact' },
 ];
 
-export function Navigation({ activeSection }) {
+export function Navigation({ activeSection, onMobileMenuChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (onMobileMenuChange) {
+      onMobileMenuChange(mobileMenuOpen);
+    }
+  }, [mobileMenuOpen, onMobileMenuChange]);
 
   useEffect(() => {
     const handleScroll = () => {

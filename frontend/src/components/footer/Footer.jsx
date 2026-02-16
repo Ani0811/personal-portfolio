@@ -267,7 +267,7 @@ export function Footer() {
 
         {/* Bottom Bar: Copyright & Signature */}
         <div className="pt-6 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-10 sm:gap-3 text-center sm:text-left">
             {/* Left: Copyright */}
             <div className="text-xs text-muted-foreground order-2 sm:order-1">
               © {currentYear} Anirudha Basu Thakur. All rights reserved.

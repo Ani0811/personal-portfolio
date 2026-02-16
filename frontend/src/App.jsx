@@ -15,6 +15,7 @@ import { ScrollToTop } from './components/scrolltotop/ScrollToTop'
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const sections = ['home', 'about', 'skills', 'projects', 'certifications', 'contact']
@@ -48,7 +49,7 @@ export default function App() {
         <GlitterOverlay intensity={1.0} />
 
         <div className="relative z-10 flex-1 flex flex-col">
-          <Navigation activeSection={activeSection} />
+          <Navigation activeSection={activeSection} onMobileMenuChange={setMobileMenuOpen} />
 
           <main className="flex-1">
             <HeroSection />
@@ -61,7 +62,7 @@ export default function App() {
 
           <Footer />
         </div>
-        <ScrollToTop />
+        <ScrollToTop mobileMenuOpen={mobileMenuOpen} />
       </div>
     </ThemeProvider>
   )
