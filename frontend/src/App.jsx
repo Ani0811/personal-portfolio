@@ -37,7 +37,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen flex flex-col bg-background text-foreground">
         {/* Global particles + glitter overlay */}
         <ParticlesBackground 
           style={{ 
@@ -47,10 +47,10 @@ export default function App() {
         />
         <GlitterOverlay intensity={1.0} />
 
-        <div className="relative z-10">
+        <div className="relative z-10 flex-1 flex flex-col">
           <Navigation activeSection={activeSection} />
 
-          <main>
+          <main className="flex-1">
             <HeroSection />
             <AboutSection />
             <SkillsSection />
